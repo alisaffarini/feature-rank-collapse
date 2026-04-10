@@ -1,0 +1,32 @@
+{
+  "source": "extracted from RunPod session, full results.json (24KB) on pod",
+  "summary": {
+    "total_time_minutes": 63.09,
+    "seeds": 3,
+    "epochs": 50,
+    "resnet18": {
+      "test_acc_mean": 0.9449,
+      "test_acc_std": 0.0003,
+      "ood": {
+        "cifar100": { "msp_auroc_mean": 0.8643, "energy_auroc_mean": 0.8552 },
+        "svhn": { "msp_auroc_mean": 0.9155, "energy_auroc_mean": 0.9194 },
+        "gaussian": { "msp_auroc_mean": 0.9741, "energy_auroc_mean": 0.9730 },
+        "uniform": { "msp_auroc_mean": 0.8365, "energy_auroc_mean": 0.7316 }
+      },
+      "rank_collapse_layer4_uniform_mean": 0.6248,
+      "deep_vs_shallow_tstat": 20.37,
+      "deep_vs_shallow_pvalue": 0.002
+    },
+    "vgg16": {
+      "test_acc_mean": 0.9280,
+      "test_acc_std": 0.0014,
+      "ood": {
+        "cifar100": { "msp_auroc_mean": 0.8654, "energy_auroc_mean": 0.8792 },
+        "svhn": { "msp_auroc_mean": 0.8994, "energy_auroc_mean": 0.9049 },
+        "gaussian": { "msp_auroc_mean": 0.9400, "energy_auroc_mean": 0.9768 },
+        "uniform": { "msp_auroc_mean": 0.7486, "energy_auroc_mean": 0.7712 }
+      },
+      "rank_collapse_pool4_uniform_mean": 0.8359
+    }
+  }
+}
