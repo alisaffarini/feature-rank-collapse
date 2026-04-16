@@ -1,0 +1,763 @@
+Device: mps
+Seeds: 3
+Epochs: 50
+
+============================================================
+SEED 42
+============================================================
+
+--- ResNet-18 ---
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  Epoch 1/50: train_acc=0.2596 test_acc=0.3866 lr=0.0999
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  Epoch 10/50: train_acc=0.8296 test_acc=0.8018 lr=0.0905
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  Epoch 20/50: train_acc=0.8871 test_acc=0.8414 lr=0.0655
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  Epoch 30/50: train_acc=0.9316 test_acc=0.8845 lr=0.0345
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6551) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6554) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6559) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6561) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6645) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6650) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6656) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6658) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6692) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6694) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  Epoch 40/50: train_acc=0.9843 test_acc=0.9312 lr=0.0095
+Python(6705) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6708) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6727) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6730) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6735) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6737) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6799) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6803) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6817) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6819) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6933) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6935) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(6952) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(6955) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7043) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7047) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7112) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7116) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7186) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7189) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7243) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7249) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7436) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7438) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7449) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7452) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7505) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7508) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7527) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7529) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7598) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7600) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7607) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7609) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7714) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7716) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7741) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7743) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7868) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7870) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  Epoch 50/50: train_acc=0.9988 test_acc=0.9424 lr=0.0000
+  Best test acc: 0.9426 (6579s)
+Python(7895) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7897) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7918) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7920) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  ID ranks: {layer1: 851.5, layer2: 884.2, layer3: 871.5, layer4: 386.4}
+Python(7929) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7931) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(7945) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7947) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  OOD=cifar100: ranks={layer1: 845.4, layer2: 881.3, layer3: 881.6, layer4: 410.1}
+    collapse={layer1: 0.007, layer2: 0.003, layer3: -0.012, layer4: -0.061}
+    MSP_AUROC=0.8659 Energy_AUROC=0.8604
+Python(7976) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(7980) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(8012) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(8014) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  OOD=svhn: ranks={layer1: 609.9, layer2: 720.2, layer3: 681.8, layer4: 251.8}
+    collapse={layer1: 0.284, layer2: 0.186, layer3: 0.218, layer4: 0.348}
+    MSP_AUROC=0.9284 Energy_AUROC=0.9349
+Python(8019) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(8020) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(8075) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(8076) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  OOD=gaussian: ranks={layer1: 868.3, layer2: 780.7, layer3: 633.0, layer4: 131.3}
+    collapse={layer1: -0.020, layer2: 0.117, layer3: 0.274, layer4: 0.660}
+    MSP_AUROC=0.9552 Energy_AUROC=0.9907
+Python(8090) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(8091) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+Python(8129) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(8130) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Device: mps
+Seeds: 3
+Epochs: 50
+Device: mps
+Seeds: 3
+Epochs: 50
+  OOD=uniform: ranks={layer1: 901.8, layer2: 872.6, layer3: 705.5, layer4: 110.0}
+    collapse={layer1: -0.059, layer2: 0.013, layer3: 0.191, layer4: 0.715}
+    MSP_AUROC=0.5658 Energy_AUROC=0.2043
+
+--- VGG-16-BN ---
+Python(8144) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Python(8151) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.

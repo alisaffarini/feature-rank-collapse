@@ -49,7 +49,7 @@
 % ABSTRACT
 % ============================================================================
 \begin{abstract}
-Reliable detection of out-of-distribution (OOD) inputs is critical for the safe deployment of deep neural networks. We introduce \emph{layer-wise feature rank collapse} as a diagnostic signal for OOD detection and present a systematic study of how the numerical rank of intermediate feature representations degrades across network depth when models encounter OOD data. Training ResNet-18 and VGG-16-BN on CIFAR-10 and evaluating against four OOD benchmarks (CIFAR-100, SVHN, Gaussian noise, uniform noise), we find that deep layers exhibit dramatically stronger rank collapse on OOD inputs than shallow layers---a pattern that is statistically significant (paired $t$-test: $t = 20.37$, $p = 0.002$) and consistent across architectures. For instance, ResNet-18's shallowest residual block shows a rank collapse of only 0.007 on uniform noise, while the deepest block collapses to 0.625. We demonstrate that this layer-wise collapse profile is complementary to established OOD scores (MSP, Energy) and provides interpretable, architecture-aware diagnostics that existing scalar-summary methods lack. Our findings suggest that monitoring feature rank across depth offers a principled and lightweight approach to understanding \emph{why} a model flags an input as OOD, beyond simply \emph{whether} it does.
+Reliable detection of out-of-distribution (OOD) inputs is critical for the safe deployment of deep neural networks. We introduce \emph{layer-wise feature rank collapse} as a diagnostic signal for OOD detection and present a systematic study of how the effective rank of intermediate feature representations degrades across network depth when models encounter OOD data. Training ResNet-18 and VGG-16-BN on CIFAR-10 and evaluating against four OOD benchmarks (CIFAR-100, SVHN, Gaussian noise, uniform noise), we find that deep layers exhibit dramatically stronger rank collapse on OOD inputs than shallow layers---a pattern that is statistically significant (paired $t$-test: $t = 20.37$, $p = 0.002$) and consistent across architectures. For instance, ResNet-18's shallowest residual block shows a rank collapse of only 0.007 on uniform noise, while the deepest block collapses to 0.625. We demonstrate that this layer-wise collapse profile is complementary to established OOD scores (MSP, Energy) and provides interpretable, architecture-aware diagnostics that existing scalar-summary methods lack. Our findings suggest that monitoring feature rank across depth offers a principled and lightweight approach to understanding \emph{why} a model flags an input as OOD, beyond simply \emph{whether} it does.
 \end{abstract}
 
 % ============================================================================
@@ -62,11 +62,11 @@ Deep neural networks achieve remarkable performance on their training distributi
 
 A rich literature has developed around OOD detection, with approaches ranging from softmax-based confidence scoring~\cite{hendrycks2017baseline} and energy functions~\cite{liu2020energy} to feature-space methods using Mahalanobis distance~\cite{lee2018simple} and gradient-based signals~\cite{huang2021importance}. While these methods are effective in aggregate, they typically produce a single scalar score per input. This leaves practitioners with limited insight into \emph{where} in the network the OOD nature of an input manifests and \emph{how} the model's internal representations degrade when faced with unfamiliar data.
 
-In this work, we take a complementary perspective. Rather than engineering a new scalar OOD score, we study the \emph{structural} changes in feature representations across network depth. Specifically, we measure the \emph{numerical rank} of feature maps at each layer and quantify how this rank collapses when the model processes OOD versus in-distribution data. Our key insight is simple but powerful: deep layers, which encode increasingly abstract and task-specific features, are far more sensitive to distributional shift than shallow layers, which capture generic low-level statistics. This differential collapse creates a distinctive \emph{layer-wise signature} that characterizes OOD inputs.
+In this work, we take a complementary perspective. Rather than engineering a new scalar OOD score, we study the \emph{structural} changes in feature representations across network depth. Specifically, we measure the \emph{effective rank} of feature maps at each layer and quantify how this rank collapses when the model processes OOD versus in-distribution data. Our key insight is simple but powerful: deep layers, which encode increasingly abstract and task-specific features, are far more sensitive to distributional shift than shallow layers, which capture generic low-level statistics. This differential collapse creates a distinctive \emph{layer-wise signature} that characterizes OOD inputs.
 
 \paragraph{Contributions.} Our contributions are threefold:
 \begin{enumerate}
-    \item We formalize the \emph{rank collapse metric}---the relative reduction in numerical rank of layer activations between in-distribution and OOD data---and propose a layer-wise analysis protocol for OOD diagnostics.
+    \item We formalize the \emph{rank collapse metric}---the relative reduction in effective rank of layer activations between in-distribution and OOD data---and propose a layer-wise analysis protocol for OOD diagnostics.
     \item We conduct a controlled empirical study across two architectures (ResNet-18 and VGG-16-BN), four OOD benchmarks, and three random seeds, demonstrating that deep layers show statistically significantly greater rank collapse than shallow layers ($t = 20.37$, $p = 0.002$).
     \item We show that layer-wise rank collapse provides complementary information to MSP and Energy scores, offering interpretable, spatially-resolved diagnostics that existing methods do not.
 \end{enumerate}
@@ -100,17 +100,12 @@ Several works have examined how representations change across layers under distr
 
 Let $f_\ell(\mathbf{x}) \in \mathbb{R}^{C_\ell \times H_\ell \times W_\ell}$ denote the activation tensor at layer $\ell$ of a trained network for input $\mathbf{x}$. Given a batch of $N$ inputs, we reshape each activation tensor into a matrix $\mathbf{A}_\ell \in \mathbb{R}^{N \times d_\ell}$, where $d_\ell = C_\ell \cdot H_\ell \cdot W_\ell$ is the flattened feature dimension.
 
-We define the \emph{numerical rank} of $\mathbf{A}_\ell$ as the number of singular values exceeding a threshold $\tau$ relative to the largest singular value:
+We measure the \emph{effective rank} of $\mathbf{A}_\ell$ using the entropy-based definition of \citet{roy2007effective}. Let $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k > 0$ denote the positive singular values of $\mathbf{A}_\ell$. The normalized singular value distribution is $p_i = \sigma_i / \sum_j \sigma_j$, and the effective rank is:
 \begin{equation}
-    \text{rank}_\tau(\mathbf{A}_\ell) = \left| \left\{ i : \sigma_i(\mathbf{A}_\ell) > \tau \cdot \sigma_1(\mathbf{A}_\ell) \right\} \right|,
-    \label{eq:numrank}
+    \text{erank}(\mathbf{A}_\ell) = \exp\!\left( -\sum_{i=1}^{k} p_i \log p_i \right),
+    \label{eq:erank}
 \end{equation}
-where $\sigma_i(\mathbf{A}_\ell)$ denotes the $i$-th singular value in descending order and $\tau = 0.01$ throughout our experiments. In practice, we compute the normalized effective rank:
-\begin{equation}
-    \widetilde{r}_\ell = \frac{\text{rank}_\tau(\mathbf{A}_\ell)}{\min(N, d_\ell)},
-    \label{eq:normrank}
-\end{equation}
-which lies in $[0, 1]$ and accounts for differences in layer dimensionality.
+which is the exponential of the Shannon entropy of the singular value distribution. This yields a continuous, differentiable measure in $[1, k]$ that captures how ``spread out'' the singular spectrum is: $\text{erank} = 1$ when a single singular value dominates, and $\text{erank} = k$ when all are equal.
 
 The \emph{rank collapse} at layer $\ell$ for an OOD dataset $\mathcal{D}_\text{ood}$ relative to the in-distribution test set $\mathcal{D}_\text{in}$ is then:
 \begin{equation}
@@ -255,7 +250,7 @@ Several limitations should be acknowledged:
 
 \begin{enumerate}
     \item \textbf{Scale of study.} Our experiments are conducted on CIFAR-10 with two architectures. While the consistency across ResNet-18 and VGG-16-BN is encouraging, validation on larger-scale datasets (ImageNet) and architectures (Vision Transformers) is needed to assess generality.
-    \item \textbf{Threshold sensitivity.} The numerical rank (Eq.~\ref{eq:numrank}) depends on the threshold $\tau$. While $\tau = 0.01$ works well empirically, a principled criterion for setting $\tau$ remains an open question.
+    \item \textbf{Sensitivity to singular value noise.} The entropy-based effective rank (Eq.~\ref{eq:erank}) is sensitive to the distribution of small singular values. While we filter out near-zero values ($\sigma < 10^{-10}$), characterizing robustness to numerical noise in activation SVDs remains an open question.
     \item \textbf{Batch dependence.} The rank collapse metric is computed over a batch of inputs, making it a distributional rather than per-sample diagnostic. Adapting the metric for single-input OOD detection (e.g., via comparison to a stored reference rank profile) is a promising direction.
     \item \textbf{Near-distribution OOD.} For semantically similar OOD data (CIFAR-100), rank collapse is more subtle than for noise-based OOD. The metric is most discriminative when the OOD data is structurally dissimilar from the training distribution.
 \end{enumerate}
