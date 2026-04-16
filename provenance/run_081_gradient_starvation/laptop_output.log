@@ -1,0 +1,77 @@
+Device: cuda
+Seeds: 3
+
+============================================================
+CIFAR-10 | Seed 42
+============================================================
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+
+--- Standard Training ---
+  Epoch 1: overall=0.4292 | top3: c6=0.63, c8=0.58, c7=0.56 | bot3: c2=0.27, c3=0.17, c4=0.10
+  Epoch 10: overall=0.8115 | top3: c0=0.92, c8=0.91, c4=0.90 | bot3: c2=0.72, c9=0.71, c3=0.60
+  Epoch 20: overall=0.8489 | top3: c1=0.98, c4=0.94, c6=0.92 | bot3: c2=0.81, c3=0.62, c5=0.60
+  Epoch 30: overall=0.8820 | top3: c4=0.95, c9=0.94, c7=0.93 | bot3: c5=0.85, c2=0.83, c3=0.68
+  Epoch 40: overall=0.9289 | top3: c1=0.97, c6=0.96, c8=0.95 | bot3: c2=0.90, c5=0.88, c3=0.86
+  Epoch 50: overall=0.9424 | top3: c1=0.97, c9=0.97, c6=0.96 | bot3: c2=0.92, c5=0.91, c3=0.88
+
+--- Balanced Gradient Training ---
+  Epoch 1: overall=0.4269 | top3: c6=0.89, c9=0.59, c8=0.54 | bot3: c1=0.34, c2=0.10, c3=0.06
+  Epoch 10: overall=0.7988 | top3: c9=0.94, c8=0.93, c1=0.92 | bot3: c4=0.70, c0=0.67, c3=0.53
+  Epoch 20: overall=0.8420 | top3: c9=0.98, c8=0.95, c6=0.94 | bot3: c0=0.75, c3=0.72, c2=0.59
+  Epoch 30: overall=0.8861 | top3: c1=0.97, c8=0.96, c9=0.95 | bot3: c6=0.83, c2=0.82, c3=0.75
+  Epoch 40: overall=0.9300 | top3: c1=0.98, c8=0.96, c7=0.96 | bot3: c2=0.92, c5=0.88, c3=0.86
+  Epoch 50: overall=0.9463 | top3: c1=0.97, c9=0.97, c6=0.96 | bot3: c2=0.93, c3=0.90, c5=0.90
+
+  Correlation (avg_sim vs learning_epoch): rho=0.5835, p=0.076596
+
+  Standard training - acc variance: 0.000900
+  Balanced training - acc variance: 0.000724
+  Variance reduction: 19.6%
+
+============================================================
+CIFAR-10 | Seed 43
+============================================================
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+
+--- Standard Training ---
+  Epoch 1: overall=0.4487 | top3: c6=0.74, c1=0.70, c9=0.64 | bot3: c4=0.35, c5=0.22, c2=0.14
+  Epoch 10: overall=0.7506 | top3: c4=0.90, c7=0.90, c9=0.90 | bot3: c6=0.68, c5=0.51, c3=0.36
+  Epoch 20: overall=0.8027 | top3: c9=0.97, c7=0.95, c1=0.93 | bot3: c2=0.72, c3=0.54, c4=0.53
+  Epoch 30: overall=0.8811 | top3: c1=0.97, c7=0.96, c6=0.94 | bot3: c4=0.85, c3=0.84, c5=0.62
+  Epoch 40: overall=0.9294 | top3: c8=0.97, c9=0.96, c4=0.96 | bot3: c2=0.92, c5=0.89, c3=0.86
+  Epoch 50: overall=0.9462 | top3: c1=0.98, c4=0.97, c7=0.96 | bot3: c2=0.93, c5=0.91, c3=0.88
+
+--- Balanced Gradient Training ---
+  Epoch 1: overall=0.4426 | top3: c0=0.64, c6=0.59, c8=0.56 | bot3: c1=0.41, c2=0.31, c3=0.16
+  Epoch 10: overall=0.7961 | top3: c6=0.94, c1=0.93, c9=0.85 | bot3: c4=0.74, c5=0.72, c3=0.55
+  Epoch 20: overall=0.8584 | top3: c0=0.93, c1=0.93, c8=0.91 | bot3: c2=0.81, c3=0.78, c5=0.71
+  Epoch 30: overall=0.8727 | top3: c1=0.93, c6=0.93, c8=0.93 | bot3: c0=0.83, c3=0.83, c5=0.74
+  Epoch 40: overall=0.9316 | top3: c9=0.97, c1=0.96, c6=0.96 | bot3: c5=0.89, c2=0.89, c3=0.85
+  Epoch 50: overall=0.9409 | top3: c1=0.97, c6=0.97, c7=0.96 | bot3: c2=0.92, c5=0.90, c3=0.87
+
+  Correlation (avg_sim vs learning_epoch): rho=0.5467, p=0.102027
+
+  Standard training - acc variance: 0.000848
+  Balanced training - acc variance: 0.001061
+  Variance reduction: -25.1%
+
+============================================================
+CIFAR-10 | Seed 44
+============================================================
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+
+--- Standard Training ---
+  Epoch 1: overall=0.4169 | top3: c8=0.86, c6=0.66, c7=0.47 | bot3: c5=0.32, c0=0.31, c4=0.05
+  Epoch 10: overall=0.7737 | top3: c1=0.94, c0=0.93, c9=0.87 | bot3: c4=0.68, c3=0.66, c5=0.55
+  Epoch 20: overall=0.8605 | top3: c1=0.97, c8=0.94, c4=0.92 | bot3: c5=0.82, c7=0.80, c3=0.66
+  Epoch 30: overall=0.8835 | top3: c8=0.98, c6=0.93, c1=0.92 | bot3: c2=0.87, c5=0.81, c3=0.78
+  Epoch 40: overall=0.9310 | top3: c1=0.98, c8=0.96, c6=0.96 | bot3: c0=0.92, c5=0.90, c3=0.84
+  Epoch 50: overall=0.9434 | top3: c1=0.97, c8=0.97, c6=0.97 | bot3: c2=0.93, c5=0.90, c3=0.90
+
+--- Balanced Gradient Training ---

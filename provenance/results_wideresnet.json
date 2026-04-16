@@ -1,0 +1,141 @@
+{
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "epochs": 20,
+    "model": "WideResNet-16-8",
+    "dataset": "CIFAR-10",
+    "depth": 16,
+    "widen_factor": 8,
+    "dropout": 0.3,
+    "mixed_precision": true,
+    "linear_probe": "LogisticRegression(max_iter=1000, C=1.0, solver=lbfgs, multi_class=multinomial)"
+  },
+  "aggregate": {
+    "global": {
+      "accuracy_mean": 0.9061333333333333,
+      "accuracy_std": 0.005050632523643861,
+      "confidence_mean": 0.8936496667987384,
+      "confidence_std": 0.004316179279084036,
+      "linear_probe_mean": 0.9101666666666667,
+      "linear_probe_std": 0.002778888666755531
+    },
+    "same_class": {
+      "accuracy_mean": 0.11123333333333334,
+      "accuracy_std": 0.009034870717884598,
+      "confidence_mean": 0.11041483567416714,
+      "confidence_std": 0.007315003347145551,
+      "linear_probe_mean": 0.9978333333333333,
+      "linear_probe_std": 0.0009428090415820641
+    },
+    "wrong_class": {
+      "accuracy_mean": 0.6406333333333333,
+      "accuracy_std": 0.031370616116926237,
+      "confidence_mean": 0.5264176606103467,
+      "confidence_std": 0.03514417305814958,
+      "linear_probe_mean": 0.9960000000000001,
+      "linear_probe_std": 0.0007071067811865219
+    },
+    "random_class": {
+      "accuracy_mean": 0.6241333333333333,
+      "accuracy_std": 0.017603850588878398,
+      "confidence_mean": 0.5121177477325565,
+      "confidence_std": 0.02254009922202556,
+      "linear_probe_mean": 0.9663333333333334,
+      "linear_probe_std": 0.004365266951236283
+    }
+  },
+  "statistical_tests": {
+    "same_vs_global_acc": {
+      "t": -95.93601677383738,
+      "p": 0.00010863402259008738
+    },
+    "wrong_vs_global_acc": {
+      "t": -10.559157438310118,
+      "p": 0.008850060060014946
+    },
+    "same_vs_wrong_acc": {
+      "t": -30.64042576786023,
+      "p": 0.0010634503105671701
+    },
+    "same_vs_global_probe": {
+      "t": 55.13978241157261,
+      "p": 0.00032874238865308864
+    }
+  },
+  "per_seed": [
+    {
+      "global": {
+        "mean_acc": 0.9017,
+        "mean_conf": 0.8895307749934872,
+        "linear_probe_acc": 0.914
+      },
+      "same_class": {
+        "mean_acc": 0.1044,
+        "mean_conf": 0.10495652624410287,
+        "linear_probe_acc": 0.9985
+      },
+      "wrong_class": {
+        "mean_acc": 0.6421,
+        "mean_conf": 0.5293710747694218,
+        "linear_probe_acc": 0.997
+      },
+      "random_class": {
+        "mean_acc": 0.6249,
+        "mean_conf": 0.5211499045298741,
+        "linear_probe_acc": 0.963
+      },
+      "seed": 42
+    },
+    {
+      "global": {
+        "mean_acc": 0.9035,
+        "mean_conf": 0.8918078112420726,
+        "linear_probe_acc": 0.909
+      },
+      "same_class": {
+        "mean_acc": 0.12399999999999997,
+        "mean_conf": 0.1207544473122348,
+        "linear_probe_acc": 0.9985
+      },
+      "wrong_class": {
+        "mean_acc": 0.6782999999999999,
+        "mean_conf": 0.5679075377389526,
+        "linear_probe_acc": 0.9955
+      },
+      "random_class": {
+        "mean_acc": 0.6453,
+        "mean_conf": 0.5340761705964265,
+        "linear_probe_acc": 0.9635
+      },
+      "seed": 43
+    },
+    {
+      "global": {
+        "mean_acc": 0.9132,
+        "mean_conf": 0.8996104141606551,
+        "linear_probe_acc": 0.9075
+      },
+      "same_class": {
+        "mean_acc": 0.10530000000000002,
+        "mean_conf": 0.1055335334661637,
+        "linear_probe_acc": 0.9965
+      },
+      "wrong_class": {
+        "mean_acc": 0.6015,
+        "mean_conf": 0.48197436932266574,
+        "linear_probe_acc": 0.9955
+      },
+      "random_class": {
+        "mean_acc": 0.6022000000000001,
+        "mean_conf": 0.48112716807136896,
+        "linear_probe_acc": 0.9725
+      },
+      "seed": 44
+    }
+  ],
+  "total_time_seconds": 4264.030973434448
+}
