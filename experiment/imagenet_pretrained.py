@@ -22,7 +22,7 @@ warnings.filterwarnings('ignore')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
 
-N_SAMPLES = 2000
+N_SAMPLES = 500
 BATCH_SIZE = 64
 N_SEEDS = 3
 
@@ -41,6 +41,9 @@ class FeatureExtractor:
     def _hook_fn(self, name, output):
         if isinstance(output, tuple):
             output = output[0]
+        # Global avg pool spatial dims to avoid OOM on SVD
+        if output.dim() == 4:
+            output = output.mean([2, 3])
         self.features[name] = output.detach()
 
     def remove(self):
@@ -51,14 +54,11 @@ class FeatureExtractor:
 
 def effective_rank(activations):
     """Compute effective rank via entropy of normalized singular values."""
-    if activations.dim() == 4:
-        B, C, H, W = activations.shape
-        X = activations.permute(0, 2, 3, 1).reshape(-1, C)
-    elif activations.dim() == 3:
-        B, T, D = activations.shape
-        X = activations.reshape(-1, D)
-    else:
-        X = activations
+    X = activations
+    if X.dim() == 4:
+        X = X.mean([2, 3])  # global avg pool
+    elif X.dim() == 3:
+        X = X.reshape(-1, X.shape[-1])
 
     X = X.float().cpu()
     X = X - X.mean(0, keepdim=True)
@@ -81,8 +81,8 @@ def main():
     resnet = timm.create_model('resnet50', pretrained=True).to(device).eval()
     vgg = timm.create_model('vgg19_bn', pretrained=True).to(device).eval()
 
-    resnet_layers = ['layer1', 'layer2', 'layer3', 'layer4']
-    vgg_layers = ['features.6', 'features.13', 'features.26', 'features.39', 'features.52']
+    resnet_layers = ['layer2', 'layer3', 'layer4']
+    vgg_layers = ['features.26', 'features.39', 'features.52']
 
     transform = transforms.Compose([
         transforms.Resize(256),
@@ -91,12 +91,8 @@ def main():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-    print("Loading ImageNet validation set...")
-    try:
-        val_dataset = torchvision.datasets.ImageFolder('/workspace/imagenet/val', transform=transform)
-    except:
-        print("ERROR: ImageNet not found at /workspace/imagenet/val/")
-        return
+    print("Loading ImageNet-V2 validation set...")
+    val_dataset = torchvision.datasets.ImageFolder('/workspace/imagenet_v2/imagenetv2-matched-frequency-format-val', transform=transform)
 
     print(f"Validation set size: {len(val_dataset)}")
 
