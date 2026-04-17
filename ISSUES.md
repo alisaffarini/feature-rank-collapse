@@ -1,72 +1,74 @@
-# Feature Rank Collapse — Known Issues
+# Feature Rank Collapse -- Known Issues
 
 This document catalogs verified discrepancies between the paper, code, and results. These must be resolved before submission.
 
 ## Critical Issues
 
-### 1. Rank Definition Mismatch (Paper vs Code)
+### 1. Rank Definition Mismatch (Paper vs Code) -- FIXED in paper
 
-**Paper** defines numerical rank as threshold-based (Eq. 1):
-```
-rank_τ(A) = |{i : σ_i(A) > τ · σ_1(A)}|   with τ = 0.01
-```
-Then normalizes: r̃ = rank_τ / min(N, d)
+**Status: RESOLVED.** The paper's Method section (Eq. 1) now correctly describes the entropy-based effective rank (Roy & Vetterli 2007) that the code actually computes. The prior draft had described a threshold-based numerical rank that was never implemented.
 
-**Code** (`experiment.py`, line 187) computes entropy-based effective rank:
-```python
-p = s / s.sum()
-entropy = -np.sum(p * np.log(p + 1e-12))
-return float(np.exp(entropy))
-```
-This is the Roy & Vetterli (2007) effective rank — a continuous measure based on Shannon entropy of the normalized singular value distribution. It is **not the same metric** as the threshold-based numerical rank described in the paper.
+### 2. Paper Numbers Were Unverifiable / Fabricated -- RESOLVED
 
-**Impact:** All reported rank values were computed using the entropy-based metric. The paper text, equations, and interpretation must be updated to describe what was actually computed, OR the experiments must be re-run using the threshold-based metric.
+**Status: RESOLVED. Full 3-seed A100 re-run completed; paper updated with real data.**
 
-### 2. Unverifiable Results
+The prior draft reported fabricated 3-seed results. A full re-run was completed on NVIDIA A100 GPU with 3 seeds (42, 43, 44) for both ResNet-18 and VGG-16-BN. Results are saved in `results/results_a100.json`. The paper has been updated with all real numbers from this JSON (3-seed mean +/- std for all metrics, per-seed appendix tables, etc.). All "preliminary" and "single-seed" caveats have been removed.
 
-**Results JSON** (`run_080_summary.json`) states: `"source": "extracted from RunPod session, full results.json (24KB) on pod"`. The full per-seed data from RunPod is not available — only a hand-written summary JSON exists.
+### 3. Per-seed Accuracy Variance Was Implausible -- RESOLVED (real data now available)
 
-**Local run data** (in `burn-tokens/research/runs/run_080_feature_collapse/output.log`) only completed:
-- ResNet-18 seed 42: test_acc=0.9426, 4 OOD evaluations completed
-- VGG-16-BN: crashed immediately after ResNet, never trained
+The prior paper claimed test_acc_std=0.0003 across 3 seeds (fabricated). Real 3-seed data now shows ResNet-18 test_acc_std=0.0012 and VGG-16-BN test_acc_std=0.0015, which are realistic variance levels.
 
-**The local output.log numbers do NOT match the summary JSON:**
-| Metric | Local (seed 42) | JSON (claimed 3-seed mean) |
-|--------|----------------|---------------------------|
-| ResNet test_acc | 0.9426 | 0.9449 |
-| gaussian MSP AUROC | 0.9552 | 0.9741 |
-| uniform MSP AUROC | 0.5658 | 0.8365 |
-| layer4 collapse (uniform) | 0.715 | 0.6248 |
+### 4. No Rank-Based OOD Detector Evaluated -- STILL OPEN
 
-The differences could indicate the JSON was from a separate RunPod session with different random seeds or hyperparameters, but this cannot be verified since the RunPod data was not saved.
-
-### 3. Per-seed Accuracy Variance
-
-The JSON reports `test_acc_std: 0.0003` across 3 seeds for ResNet-18 (94.49% ± 0.03%). While not impossible, this is unusually low variance for CIFAR-10 ResNet-18 training (typical std is ~0.1-0.3%).
-
-### 4. No Rank-Based OOD Detector Evaluated
-
-The paper claims "complementarity" with MSP/Energy scores and discusses the rank collapse profile as a diagnostic tool, but **no rank-based OOD detector is actually implemented or evaluated.** The paper should either:
+The paper discusses rank collapse as a "complementary" signal to MSP/Energy but never implements a rank-based OOD detector. The paper should either:
 - Implement a simple rank-based detector and report AUROC
-- Or explicitly scope the contribution as "analysis/diagnostic only" and remove claims of "complementarity"
+- Or explicitly scope the contribution as "analysis/diagnostic only" and remove "complementarity" claims
 
-### 5. Table 2 Incomplete
+### 5. Table 2 Incomplete -- RESOLVED
 
-Paper Table 2 has "---" entries for two layers, suggesting missing data.
+Table 2 now contains full 3-seed mean +/- std data for all layers of both ResNet-18 and VGG-16-BN, across all 4 OOD datasets. VGG-16-BN data is in a separate Table 3.
+
+### 6. VGG-16-BN Data Missing -- RESOLVED
+
+VGG-16-BN 3-seed data is now available from the A100 re-run. The architecture comparison section in the paper has been fully written with real data. VGG-16-BN shows stronger deep-layer collapse than ResNet-18 (pool4 RC=0.800 vs layer4 RC=0.625 on uniform noise), supporting the residual-connections-mitigate-collapse hypothesis.
+
+### 7. Provenance `results_wideresnet.json` is Misplaced -- NEW
+
+The file `provenance/results_wideresnet.json` contains WideResNet-16-8 dropout/linear-probe experiment data (same_class/wrong_class/random_class perturbations). This appears to be from the bn-calibration repo, not feature-rank-collapse. It should be moved to the correct repo or deleted.
+
+### 8. Provenance `run_081_gradient_starvation/` is Unrelated -- NEW
+
+The `run_081_gradient_starvation/` directory contains a completely different experiment about per-class gradient norms and class-balanced training. It is NOT related to feature rank collapse. This data belongs in a different repo. The logs show it ran on CUDA (RunPod) and MPS (laptop) but the experiments are incomplete (laptop MPS runs have heavy noise from MallocStackLogging and appear truncated).
+
+### 9. experiment.py Provenance vs Current -- VERIFIED MATCH
+
+The provenance copy `provenance/run_080_feature_collapse/experiment.py` is byte-identical to `experiment/experiment.py`. No code drift.
 
 ## Recommended Path Forward
 
-1. **Re-run experiments** from scratch with both ResNet-18 and VGG-16-BN, 3+ seeds, saving full per-seed data
-2. **Fix rank definition** — either update paper to describe entropy-based effective rank (what code computes) or update code to use threshold-based rank (what paper describes)
-3. **Implement a rank-based OOD detector** or remove "complementarity" claims
-4. **Save raw data** — per-seed accuracies, per-layer ranks for all OOD datasets
+1. ~~**Full GPU re-run is MANDATORY.**~~ **DONE.** A100 re-run completed with 3 seeds for both architectures. Results in `results/results_a100.json`.
+2. **Implement a rank-based OOD detector** or remove "complementarity" claims from the paper.
+3. **Clean up provenance:** Remove or relocate `results_wideresnet.json` and `run_081_gradient_starvation/` to their correct repos.
+4. ~~**Save raw data**~~ **DONE.** Full per-seed JSON is saved in `results/results_a100.json`.
 
 ## What IS Verified
 
-From the local output.log, seed 42 ResNet-18 produced:
-- Training completed (50 epochs, test_acc 0.9426)
-- Layer-wise rank collapse pattern IS real: deeper layers show more collapse
-  - uniform OOD: layer1=-0.059, layer2=0.013, layer3=0.191, layer4=0.715
-  - gaussian OOD: layer1=-0.020, layer2=0.117, layer3=0.274, layer4=0.660
-- The core thesis (deeper layers collapse more on OOD) appears genuine based on seed 42
-- OOD detection scores: gaussian AUROC high (0.95+), uniform AUROC low (0.57) — expected pattern
+From the A100 re-run (`results/results_a100.json`), all 6 training runs (2 architectures x 3 seeds) completed successfully in ~111 minutes:
+
+**ResNet-18 (3-seed mean):**
+- test_acc: 94.34% +/- 0.12%
+- Layer-wise rank collapse pattern confirmed across all 3 seeds:
+  - uniform OOD: layer1=-0.053, layer2=0.010, layer3=0.213, layer4=0.625
+  - gaussian OOD: layer1=-0.027, layer2=0.098, layer3=0.295, layer4=0.595
+  - svhn OOD: layer1=0.262, layer2=0.183, layer3=0.210, layer4=0.360
+  - cifar100 OOD: layer1=0.007, layer2=0.003, layer3=-0.016, layer4=-0.063
+
+**VGG-16-BN (3-seed mean):**
+- test_acc: 92.92% +/- 0.15%
+- Shows even stronger deep-layer collapse than ResNet-18:
+  - uniform OOD: pool0=-0.059, pool1=0.042, pool2=0.235, pool3=0.390, pool4=0.800
+  - gaussian OOD: pool0=-0.058, pool1=0.114, pool2=0.313, pool3=0.366, pool4=0.784
+
+## Honest Assessment
+
+The paper is now on solid empirical footing with 3-seed A100 data for both architectures. The core phenomenon (monotonically increasing rank collapse with depth on far-OOD data) is confirmed across seeds and architectures. The remaining open issues are: (1) implementing a rank-based OOD detector or scoping the contribution as analysis-only, and (2) cleaning up unrelated provenance files.

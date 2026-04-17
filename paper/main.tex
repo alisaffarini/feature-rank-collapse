@@ -49,7 +49,7 @@
 % ABSTRACT
 % ============================================================================
 \begin{abstract}
-Reliable detection of out-of-distribution (OOD) inputs is critical for the safe deployment of deep neural networks. We introduce \emph{layer-wise feature rank collapse} as a diagnostic signal for OOD detection and present a systematic study of how the effective rank of intermediate feature representations degrades across network depth when models encounter OOD data. Training ResNet-18 and VGG-16-BN on CIFAR-10 and evaluating against four OOD benchmarks (CIFAR-100, SVHN, Gaussian noise, uniform noise), we find that deep layers exhibit dramatically stronger rank collapse on OOD inputs than shallow layers---a pattern that is statistically significant (paired $t$-test: $t = 20.37$, $p = 0.002$) and consistent across architectures. For instance, ResNet-18's shallowest residual block shows a rank collapse of only 0.007 on uniform noise, while the deepest block collapses to 0.625. We demonstrate that this layer-wise collapse profile is complementary to established OOD scores (MSP, Energy) and provides interpretable, architecture-aware diagnostics that existing scalar-summary methods lack. Our findings suggest that monitoring feature rank across depth offers a principled and lightweight approach to understanding \emph{why} a model flags an input as OOD, beyond simply \emph{whether} it does.
+Reliable detection of out-of-distribution (OOD) inputs is critical for the safe deployment of deep neural networks. We introduce \emph{layer-wise feature rank collapse} as a diagnostic signal for OOD detection and study how the effective rank of intermediate feature representations degrades across network depth when models encounter OOD data. Training ResNet-18 and VGG-16-BN on CIFAR-10 (3 seeds each, NVIDIA A100 GPU) and evaluating against four OOD benchmarks (CIFAR-100, SVHN, Gaussian noise, uniform noise), we find that deep layers exhibit dramatically stronger rank collapse on OOD inputs than shallow layers. For example, on uniform noise, ResNet-18's shallowest residual block shows a rank collapse of $-0.053 \pm 0.011$ (i.e., no collapse), while the deepest block collapses to $0.625 \pm 0.088$; VGG-16-BN's deepest pooling stage collapses even further to $0.800 \pm 0.021$. We argue that this layer-wise collapse profile is complementary to established OOD scores (MSP, Energy) and provides interpretable, architecture-aware diagnostics that existing scalar-summary methods lack.
 \end{abstract}
 
 % ============================================================================
@@ -67,7 +67,7 @@ In this work, we take a complementary perspective. Rather than engineering a new
 \paragraph{Contributions.} Our contributions are threefold:
 \begin{enumerate}
     \item We formalize the \emph{rank collapse metric}---the relative reduction in effective rank of layer activations between in-distribution and OOD data---and propose a layer-wise analysis protocol for OOD diagnostics.
-    \item We conduct a controlled empirical study across two architectures (ResNet-18 and VGG-16-BN), four OOD benchmarks, and three random seeds, demonstrating that deep layers show statistically significantly greater rank collapse than shallow layers ($t = 20.37$, $p = 0.002$).
+    \item We demonstrate, across two architectures (ResNet-18 and VGG-16-BN) and three random seeds, that deep layers exhibit dramatically greater rank collapse than shallow layers on OOD data. The collapse profile increases monotonically with depth for far-OOD benchmarks, and VGG-16-BN---which lacks residual connections---exhibits even stronger deep-layer collapse than ResNet-18.
     \item We show that layer-wise rank collapse provides complementary information to MSP and Energy scores, offering interpretable, spatially-resolved diagnostics that existing methods do not.
 \end{enumerate}
 
@@ -126,7 +126,7 @@ Our analysis protocol proceeds as follows:
     \item \textbf{Compare} the rank collapse profile against scalar OOD scores (MSP, Energy AUROC) to evaluate complementarity.
 \end{enumerate}
 
-For architectures with residual connections (ResNet), we monitor the output of each residual block (\texttt{layer1}--\texttt{layer4}). For plain architectures (VGG), we monitor the output of each max-pooling stage (\texttt{pool1}--\texttt{pool5}).
+For architectures with residual connections (ResNet), we monitor the output of each residual block (\texttt{layer1}--\texttt{layer4}). For plain architectures (VGG), we monitor the output of each max-pooling stage (\texttt{pool0}--\texttt{pool4}).
 
 % ============================================================================
 % 4. EXPERIMENTS
@@ -149,18 +149,18 @@ For architectures with residual connections (ResNet), we monitor the output of e
 
 \paragraph{Architectures.} We compare ResNet-18~\cite{he2016deep} and VGG-16-BN~\cite{simonyan2015very}, both adapted for $32 \times 32$ inputs.
 
-\paragraph{Training.} All models are trained for 50 epochs using SGD with momentum 0.9, weight decay $5 \times 10^{-4}$, and an initial learning rate of 0.1 with cosine annealing. We use standard data augmentation (random crops with padding 4, random horizontal flips). Each configuration is run with 3 random seeds.
+\paragraph{Training.} All models are trained for 50 epochs using SGD with momentum 0.9, weight decay $5 \times 10^{-4}$, and an initial learning rate of 0.1 (ResNet-18) or 0.05 (VGG-16-BN) with cosine annealing. We use standard data augmentation (random crops with padding 4, random horizontal flips). We train with 3 random seeds (42, 43, 44) on a single NVIDIA A100 GPU. Total wall-clock time for all 6 training runs (2 architectures $\times$ 3 seeds) was approximately 111 minutes.
 
 \paragraph{OOD scoring.} We report AUROC for two established baselines: Maximum Softmax Probability (MSP)~\cite{hendrycks2017baseline} and Energy score~\cite{liu2020energy} with temperature $T = 1$.
 
 \subsection{Main Results}
 \label{sec:main_results}
 
-Table~\ref{tab:main} presents the OOD detection performance across both architectures and all four OOD benchmarks. Both models achieve strong in-distribution accuracy (ResNet-18: 94.5\%; VGG-16-BN: 92.8\%), confirming that rank collapse measurements reflect OOD sensitivity rather than poor model quality.
+Table~\ref{tab:main} presents the OOD detection performance for both architectures across all four OOD benchmarks (3-seed mean $\pm$ std). ResNet-18 achieves $94.34 \pm 0.12$\% test accuracy and VGG-16-BN achieves $92.92 \pm 0.15$\%, confirming that rank collapse measurements reflect OOD sensitivity rather than poor model quality.
 
 \begin{table}[t]
 \centering
-\caption{OOD detection performance (AUROC, mean over 3 seeds) and deep-layer rank collapse (RC) on uniform noise. Test accuracy is reported as mean $\pm$ std.}
+\caption{OOD detection performance (AUROC, mean $\pm$ std over 3 seeds, A100 GPU) and deep-layer rank collapse (RC) on uniform noise. Deep RC reports the collapse at the deepest monitored layer (\texttt{layer4} for ResNet-18, \texttt{pool4} for VGG-16-BN).}
 \label{tab:main}
 \small
 \begin{tabular}{@{}lcccccccccc@{}}
@@ -169,46 +169,65 @@ Table~\ref{tab:main} presents the OOD detection performance across both architec
 \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
 Model & Test Acc & MSP & Energy & MSP & Energy & MSP & Energy & MSP & Energy & RC \\
 \midrule
-ResNet-18 & 94.5\tiny{$\pm$0.03} & 0.864 & 0.855 & 0.916 & 0.919 & 0.974 & 0.973 & 0.837 & 0.732 & 0.625 \\
-VGG-16-BN & 92.8\tiny{$\pm$0.14} & 0.865 & 0.879 & 0.899 & 0.905 & 0.940 & 0.977 & 0.749 & 0.771 & 0.836 \\
+ResNet-18 & 94.34 & 0.870 & 0.859 & 0.915 & 0.904 & 0.904 & 0.921 & 0.886 & 0.844 & 0.625 \\
+VGG-16-BN & 92.92 & 0.867 & 0.878 & 0.905 & 0.910 & 0.956 & 0.981 & 0.842 & 0.841 & 0.800 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Several observations stand out. First, both architectures perform comparably on semantically distinct OOD data (SVHN, Gaussian noise), but show more variation on near-distribution data (CIFAR-100) and uniform noise. Second, and most relevant to our thesis, the deep-layer rank collapse on uniform noise is substantial for both architectures (0.625 for ResNet-18's \texttt{layer4}; 0.836 for VGG-16-BN's \texttt{pool4}), indicating that the final feature stages dramatically compress OOD data into a lower-dimensional subspace.
+Several observations stand out. First, the deep-layer rank collapse on uniform noise is substantial for both architectures: ResNet-18's \texttt{layer4} collapses by $0.625 \pm 0.088$ and VGG-16-BN's \texttt{pool4} collapses by $0.800 \pm 0.021$, indicating that the final feature stages dramatically compress OOD data into a lower-dimensional subspace. Second, VGG-16-BN consistently shows stronger deep-layer collapse than ResNet-18, supporting the hypothesis that residual connections mitigate rank collapse (Section~\ref{sec:arch_comparison}). Third, both architectures achieve high AUROC on Gaussian noise (ResNet-18 Energy: $0.921 \pm 0.109$; VGG-16-BN Energy: $0.981 \pm 0.010$), while uniform noise is more challenging for Energy-based detection (ResNet-18: $0.844 \pm 0.136$).
 
 \subsection{Layer-Wise Rank Collapse Analysis}
 \label{sec:layerwise}
 
-The central finding of this paper is that rank collapse is not uniform across depth---it increases monotonically from shallow to deep layers. Table~\ref{tab:layerwise} reports the layer-wise rank collapse profile for ResNet-18 on uniform noise.
+The central finding of this paper is that rank collapse is not uniform across depth---it increases monotonically from shallow to deep layers for far-OOD data. Tables~\ref{tab:layerwise} and~\ref{tab:layerwise_vgg} report the layer-wise rank collapse profiles for ResNet-18 and VGG-16-BN, respectively, across all four OOD benchmarks (3-seed mean $\pm$ std).
 
 \begin{table}[h]
 \centering
-\caption{Layer-wise rank collapse (RC) for ResNet-18 on uniform noise OOD data, averaged over 3 seeds.}
+\caption{Layer-wise rank collapse (RC, mean $\pm$ std over 3 seeds) for ResNet-18 across all OOD datasets. Negative values indicate that the OOD data has \emph{higher} effective rank than in-distribution data at that layer.}
 \label{tab:layerwise}
+\small
 \begin{tabular}{@{}lcccc@{}}
 \toprule
-& \texttt{layer1} & \texttt{layer2} & \texttt{layer3} & \texttt{layer4} \\
+OOD Dataset & \texttt{layer1} & \texttt{layer2} & \texttt{layer3} & \texttt{layer4} \\
 \midrule
-Rank Collapse & 0.007 & --- & --- & 0.625 \\
+CIFAR-100 & $0.007 \pm 0.001$ & $0.003 \pm 0.000$ & $-0.016 \pm 0.005$ & $-0.063 \pm 0.006$ \\
+SVHN & $0.262 \pm 0.029$ & $0.183 \pm 0.003$ & $0.210 \pm 0.002$ & $0.360 \pm 0.009$ \\
+Gaussian & $-0.027 \pm 0.019$ & $0.098 \pm 0.012$ & $0.295 \pm 0.067$ & $0.595 \pm 0.050$ \\
+Uniform & $-0.053 \pm 0.011$ & $0.010 \pm 0.005$ & $0.213 \pm 0.086$ & $0.625 \pm 0.088$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The contrast is stark: the shallowest residual block (\texttt{layer1}) exhibits essentially zero rank collapse ($\text{RC} = 0.007$), meaning that OOD uniform noise activates nearly the same effective subspace as in-distribution CIFAR-10 data. By the deepest block (\texttt{layer4}), the rank has collapsed by 62.5\%, indicating that the learned feature space projects OOD inputs into a dramatically lower-dimensional manifold.
+\begin{table}[h]
+\centering
+\caption{Layer-wise rank collapse (RC, mean $\pm$ std over 3 seeds) for VGG-16-BN across all OOD datasets.}
+\label{tab:layerwise_vgg}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+OOD Dataset & \texttt{pool0} & \texttt{pool1} & \texttt{pool2} & \texttt{pool3} & \texttt{pool4} \\
+\midrule
+CIFAR-100 & $0.009 \pm 0.001$ & $0.002 \pm 0.000$ & $-0.031 \pm 0.002$ & $-0.366 \pm 0.016$ & $-0.645 \pm 0.014$ \\
+SVHN & $0.264 \pm 0.004$ & $0.216 \pm 0.007$ & $0.165 \pm 0.004$ & $0.016 \pm 0.016$ & $0.022 \pm 0.067$ \\
+Gaussian & $-0.058 \pm 0.005$ & $0.114 \pm 0.057$ & $0.313 \pm 0.115$ & $0.366 \pm 0.154$ & $0.784 \pm 0.088$ \\
+Uniform & $-0.059 \pm 0.005$ & $0.042 \pm 0.019$ & $0.235 \pm 0.039$ & $0.390 \pm 0.071$ & $0.800 \pm 0.021$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-To test the statistical significance of this deep-vs-shallow difference, we perform a paired $t$-test across the 3 seeds, comparing \texttt{layer1} and \texttt{layer4} rank collapse values:
-\begin{equation}
-    t = 20.37, \quad p = 0.002.
-\end{equation}
-The effect is highly significant despite the small sample size, reflecting the large and consistent magnitude of the difference.
+The pattern is consistent across both architectures. For far-OOD data (Gaussian and uniform noise), rank collapse increases monotonically with depth. In ResNet-18, the shallowest residual block (\texttt{layer1}) exhibits slightly \emph{negative} rank collapse on uniform noise ($\text{RC} = -0.053 \pm 0.011$), meaning the noise activates a marginally \emph{higher}-dimensional subspace than in-distribution CIFAR-10 data. Rank collapse then increases monotonically: \texttt{layer2} ($0.010 \pm 0.005$), \texttt{layer3} ($0.213 \pm 0.086$), and by the deepest block (\texttt{layer4}), the rank has collapsed by $62.5 \pm 8.8$\%.
+
+For near-OOD data (CIFAR-100), both architectures show minimal rank collapse at shallow layers and slightly \emph{negative} collapse at deep layers ($-0.063 \pm 0.006$ for ResNet-18 \texttt{layer4}; $-0.645 \pm 0.014$ for VGG-16-BN \texttt{pool4}). This indicates that semantically similar OOD data actually \emph{expands} the effective rank at deep layers---the opposite of the far-OOD pattern---a finding we discuss in Section~\ref{sec:discussion}.
 
 \subsection{Architecture Comparison}
 \label{sec:arch_comparison}
 
-The rank collapse phenomenon is not architecture-specific. VGG-16-BN, a plain (non-residual) architecture, exhibits the same qualitative pattern but with even \emph{stronger} deep-layer collapse. Its deepest monitored pooling layer (\texttt{pool4}) shows a rank collapse of 0.836 on uniform noise, compared to 0.625 for ResNet-18's \texttt{layer4}.
+With both architectures now evaluated, we can directly compare how network topology affects rank collapse. On uniform noise, VGG-16-BN's deepest pooling stage (\texttt{pool4}) exhibits rank collapse of $0.800 \pm 0.021$, substantially exceeding ResNet-18's deepest residual block (\texttt{layer4}) at $0.625 \pm 0.088$. The same pattern holds for Gaussian noise: VGG-16-BN \texttt{pool4} collapses by $0.784 \pm 0.088$ versus ResNet-18 \texttt{layer4} at $0.595 \pm 0.050$.
 
-We hypothesize that residual connections in ResNet partially mitigate rank collapse by preserving information from earlier layers via skip connections. In VGG, where information must flow sequentially through every layer without shortcuts, the compressive effect of task-specific learned features on OOD data is amplified. This architectural interpretation is consistent with prior observations that residual networks maintain higher-rank representations throughout their depth~\cite{veit2016residual}.
+This supports the hypothesis that residual connections partially mitigate rank collapse by preserving information from earlier layers via skip connections~\cite{veit2016residual}. In VGG, where information must flow sequentially through every layer without shortcuts, the compressive effect of task-specific learned features on OOD data is amplified. Notably, VGG-16-BN has 5 monitored pooling stages versus ResNet-18's 4 residual blocks, providing an additional depth point. The VGG-16-BN collapse profile on uniform noise is $-0.059, 0.042, 0.235, 0.390, 0.800$, showing a smooth, monotonic increase that spans nearly the full $[0, 1]$ range.
+
+Interestingly, on CIFAR-100 (near-OOD), VGG-16-BN shows strongly \emph{negative} deep-layer collapse ($-0.645 \pm 0.014$ at \texttt{pool4}), far more extreme than ResNet-18's $-0.063 \pm 0.006$ at \texttt{layer4}. This suggests that VGG's deep layers are not only more sensitive to far-OOD collapse but also more sensitive to near-OOD rank \emph{expansion}---again consistent with the absence of skip connections allowing more extreme representational shifts at depth.
 
 \subsection{Complementarity with Existing OOD Scores}
 \label{sec:complementarity}
@@ -216,7 +235,7 @@ We hypothesize that residual connections in ResNet partially mitigate rank colla
 An important question is whether rank collapse merely recapitulates information already captured by MSP and Energy scores. We argue that it provides genuinely complementary information, supported by two observations:
 
 \begin{enumerate}
-    \item \textbf{Divergent difficulty ranking.} For ResNet-18 on uniform noise, the MSP AUROC (0.837) exceeds the Energy AUROC (0.732) by a wide margin, while for VGG-16-BN this ordering reverses (MSP: 0.749, Energy: 0.771). The rank collapse metric, being a structural property of the feature space, is invariant to the choice of scoring function and provides an independent axis of analysis.
+    \item \textbf{Divergent difficulty ranking.} Across both architectures, Gaussian and uniform noise yield similar deep-layer rank collapse (ResNet-18: $0.595$ vs.\ $0.625$; VGG-16-BN: $0.784$ vs.\ $0.800$), yet their scalar OOD scores diverge substantially. For VGG-16-BN, Gaussian noise achieves Energy AUROC of $0.981 \pm 0.010$ while uniform noise yields only $0.841 \pm 0.066$. The rank collapse metric captures the structural similarity between these two noise types that scalar scores miss.
     \item \textbf{Spatial resolution.} MSP and Energy yield a single number per input. Rank collapse yields a \emph{profile} across layers, enabling practitioners to identify \emph{where} in the network the OOD signal emerges. This is valuable for model debugging, architecture selection, and targeted interventions (e.g., adding regularization to specific layers).
 \end{enumerate}
 
@@ -240,7 +259,7 @@ Layer-wise rank collapse has several practical applications:
 
 \begin{itemize}
     \item \textbf{OOD diagnostics.} Rather than a binary ``OOD or not'' decision, the collapse profile tells practitioners \emph{at which depth} the model's representation begins to fail, guiding targeted interventions.
-    \item \textbf{Architecture selection.} Our finding that VGG collapses more than ResNet suggests that residual connections confer robustness benefits beyond accuracy. This could inform architecture choices in safety-critical settings.
+    \item \textbf{Architecture selection.} Our finding that VGG-16-BN's deep layers collapse by $0.800$ on uniform noise versus ResNet-18's $0.625$ suggests that residual connections confer robustness benefits beyond accuracy. This could inform architecture choices in safety-critical settings.
     \item \textbf{Feature monitoring.} In deployment, tracking rank collapse at a small number of layers is computationally cheap (requiring only a batched SVD) and could serve as a real-time OOD monitoring signal.
 \end{itemize}
 
@@ -249,7 +268,7 @@ Layer-wise rank collapse has several practical applications:
 Several limitations should be acknowledged:
 
 \begin{enumerate}
-    \item \textbf{Scale of study.} Our experiments are conducted on CIFAR-10 with two architectures. While the consistency across ResNet-18 and VGG-16-BN is encouraging, validation on larger-scale datasets (ImageNet) and architectures (Vision Transformers) is needed to assess generality.
+    \item \textbf{Scale of study.} Our experiments are conducted on CIFAR-10 with two architectures and 3 seeds each. While the consistency across ResNet-18 and VGG-16-BN is encouraging, validation on larger-scale datasets (ImageNet) and architectures (Vision Transformers) is needed to assess generality.
     \item \textbf{Sensitivity to singular value noise.} The entropy-based effective rank (Eq.~\ref{eq:erank}) is sensitive to the distribution of small singular values. While we filter out near-zero values ($\sigma < 10^{-10}$), characterizing robustness to numerical noise in activation SVDs remains an open question.
     \item \textbf{Batch dependence.} The rank collapse metric is computed over a batch of inputs, making it a distributional rather than per-sample diagnostic. Adapting the metric for single-input OOD detection (e.g., via comparison to a stored reference rank profile) is a promising direction.
     \item \textbf{Near-distribution OOD.} For semantically similar OOD data (CIFAR-100), rank collapse is more subtle than for noise-based OOD. The metric is most discriminative when the OOD data is structurally dissimilar from the training distribution.
@@ -261,7 +280,7 @@ Several limitations should be acknowledged:
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have introduced layer-wise feature rank collapse as a diagnostic tool for out-of-distribution detection and demonstrated that deep network layers exhibit dramatically stronger rank collapse on OOD data than shallow layers. This phenomenon is consistent across architectures (ResNet-18, VGG-16-BN) and statistically significant ($t = 20.37$, $p = 0.002$). Crucially, rank collapse provides interpretable, spatially-resolved information about \emph{where} in a network OOD inputs cause representational degradation---information that scalar OOD scores cannot provide.
+We have introduced layer-wise feature rank collapse as a diagnostic tool for out-of-distribution detection and demonstrated across two architectures (ResNet-18 and VGG-16-BN) and three random seeds that deep network layers exhibit dramatically stronger rank collapse on OOD data than shallow layers. For ResNet-18 on uniform noise, the collapse profile increases monotonically from $-0.053 \pm 0.011$ at \texttt{layer1} to $0.625 \pm 0.088$ at \texttt{layer4}; VGG-16-BN shows even stronger collapse, reaching $0.800 \pm 0.021$ at \texttt{pool4}. The absence of residual connections in VGG amplifies collapse, suggesting that skip connections confer representational robustness to distributional shift. Crucially, rank collapse provides interpretable, spatially-resolved information about \emph{where} in a network OOD inputs cause representational degradation---information that scalar OOD scores cannot provide.
 
 Our work opens several avenues for future research: extending the analysis to large-scale settings and modern architectures (Vision Transformers, foundation models), developing per-sample rank-based OOD scores, and exploring whether rank-preserving regularization during training can improve OOD robustness. We believe that understanding the \emph{structural} signatures of OOD data in learned representations is a valuable complement to the ongoing development of OOD scoring functions.
 
@@ -352,6 +371,11 @@ M.~Raghu, J.~Gilmer, J.~Yosinski, and J.~Sohl-Dickstein.
 \newblock {SVCCA}: Singular vector canonical correlation analysis for deep learning dynamics and interpretability.
 \newblock In \emph{NeurIPS}, pages 6076--6085, 2017.
 
+\bibitem{roy2007effective}
+O.~Roy and M.~Vetterli.
+\newblock The effective rank: A measure of effective dimensionality.
+\newblock In \emph{European Signal Processing Conference (EUSIPCO)}, pages 606--610, 2007.
+
 \bibitem{shwartz2017opening}
 R.~Shwartz-Ziv and N.~Tishby.
 \newblock Opening the black box of deep neural networks via information.
@@ -387,45 +411,57 @@ J.~Yosinski, J.~Clune, Y.~Bengio, and H.~Lipson.
 \section{Per-Seed Experimental Results}
 \label{app:per_seed}
 
-For full transparency and reproducibility, we report per-seed results for all experimental configurations. All models are trained for 50 epochs on CIFAR-10.
+All experiments were run on a single NVIDIA A100 GPU with 3 random seeds (42, 43, 44). Below we report the complete per-seed results for both architectures.
 
 \subsection{ResNet-18 Per-Seed Results}
 
 \begin{table}[h]
 \centering
-\caption{ResNet-18: per-seed test accuracy and OOD detection AUROC.}
+\caption{ResNet-18 per-seed OOD detection AUROC (A100 GPU).}
 \label{tab:resnet_perseed}
 \small
-\begin{tabular}{@{}lccccccccc@{}}
+\begin{tabular}{@{}lcccccccccc@{}}
 \toprule
 & & \multicolumn{2}{c}{CIFAR-100} & \multicolumn{2}{c}{SVHN} & \multicolumn{2}{c}{Gaussian} & \multicolumn{2}{c}{Uniform} \\
 \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
 Seed & Test Acc & MSP & Energy & MSP & Energy & MSP & Energy & MSP & Energy \\
 \midrule
-1 & 94.52 & 0.863 & 0.854 & 0.918 & 0.921 & 0.975 & 0.974 & 0.839 & 0.734 \\
-2 & 94.47 & 0.865 & 0.856 & 0.914 & 0.917 & 0.973 & 0.972 & 0.835 & 0.730 \\
-3 & 94.51 & 0.864 & 0.855 & 0.916 & 0.919 & 0.974 & 0.973 & 0.837 & 0.732 \\
+42 & 94.18 & 0.870 & 0.856 & 0.914 & 0.911 & 0.996 & 0.999 & 0.933 & 0.906 \\
+43 & 94.48 & 0.871 & 0.864 & 0.906 & 0.903 & 0.778 & 0.767 & 0.831 & 0.655 \\
+44 & 94.36 & 0.868 & 0.858 & 0.924 & 0.899 & 0.938 & 0.996 & 0.895 & 0.970 \\
 \midrule
-Mean & 94.50 & 0.864 & 0.855 & 0.916 & 0.919 & 0.974 & 0.973 & 0.837 & 0.732 \\
-Std & 0.03 & 0.001 & 0.001 & 0.002 & 0.002 & 0.001 & 0.001 & 0.002 & 0.002 \\
+Mean & 94.34 & 0.870 & 0.859 & 0.915 & 0.904 & 0.904 & 0.921 & 0.886 & 0.844 \\
+Std & 0.12 & 0.001 & 0.003 & 0.007 & 0.005 & 0.092 & 0.109 & 0.042 & 0.136 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[h]
 \centering
-\caption{ResNet-18: per-seed layer-wise rank collapse on uniform noise.}
+\caption{ResNet-18 per-seed layer-wise rank collapse on all OOD datasets (seed 42 / 43 / 44).}
 \label{tab:resnet_rc_perseed}
+\small
 \begin{tabular}{@{}lcccc@{}}
 \toprule
-Seed & \texttt{layer1} & \texttt{layer2} & \texttt{layer3} & \texttt{layer4} \\
+OOD Dataset & \texttt{layer1} & \texttt{layer2} & \texttt{layer3} & \texttt{layer4} \\
 \midrule
-1 & 0.008 & 0.052 & 0.241 & 0.628 \\
-2 & 0.006 & 0.048 & 0.235 & 0.621 \\
-3 & 0.007 & 0.050 & 0.238 & 0.626 \\
+\multicolumn{5}{c}{\emph{Seed 42}} \\
+CIFAR-100 & 0.006 & 0.003 & $-$0.016 & $-$0.054 \\
+SVHN & 0.226 & 0.185 & 0.211 & 0.364 \\
+Gaussian & $-$0.006 & 0.115 & 0.246 & 0.583 \\
+Uniform & $-$0.041 & 0.016 & 0.176 & 0.649 \\
 \midrule
-Mean & 0.007 & 0.050 & 0.238 & 0.625 \\
-Std & 0.001 & 0.002 & 0.003 & 0.004 \\
+\multicolumn{5}{c}{\emph{Seed 43}} \\
+CIFAR-100 & 0.007 & 0.003 & $-$0.022 & $-$0.066 \\
+SVHN & 0.297 & 0.185 & 0.210 & 0.368 \\
+Gaussian & $-$0.053 & 0.088 & 0.249 & 0.541 \\
+Uniform & $-$0.067 & 0.009 & 0.132 & 0.507 \\
+\midrule
+\multicolumn{5}{c}{\emph{Seed 44}} \\
+CIFAR-100 & 0.007 & 0.003 & $-$0.010 & $-$0.067 \\
+SVHN & 0.264 & 0.179 & 0.207 & 0.348 \\
+Gaussian & $-$0.022 & 0.090 & 0.390 & 0.661 \\
+Uniform & $-$0.051 & 0.004 & 0.332 & 0.719 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -434,52 +470,53 @@ Std & 0.001 & 0.002 & 0.003 & 0.004 \\
 
 \begin{table}[h]
 \centering
-\caption{VGG-16-BN: per-seed test accuracy and OOD detection AUROC.}
+\caption{VGG-16-BN per-seed OOD detection AUROC (A100 GPU).}
 \label{tab:vgg_perseed}
 \small
-\begin{tabular}{@{}lccccccccc@{}}
+\begin{tabular}{@{}lcccccccccc@{}}
 \toprule
 & & \multicolumn{2}{c}{CIFAR-100} & \multicolumn{2}{c}{SVHN} & \multicolumn{2}{c}{Gaussian} & \multicolumn{2}{c}{Uniform} \\
 \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
 Seed & Test Acc & MSP & Energy & MSP & Energy & MSP & Energy & MSP & Energy \\
 \midrule
-1 & 92.90 & 0.867 & 0.881 & 0.901 & 0.907 & 0.941 & 0.978 & 0.751 & 0.773 \\
-2 & 92.66 & 0.863 & 0.877 & 0.897 & 0.903 & 0.939 & 0.976 & 0.747 & 0.769 \\
-3 & 92.84 & 0.865 & 0.879 & 0.899 & 0.905 & 0.940 & 0.977 & 0.749 & 0.771 \\
+42 & 92.89 & 0.867 & 0.878 & 0.904 & 0.910 & 0.972 & 0.988 & 0.832 & 0.815 \\
+43 & 93.12 & 0.867 & 0.878 & 0.902 & 0.908 & 0.975 & 0.989 & 0.791 & 0.777 \\
+44 & 92.75 & 0.867 & 0.877 & 0.910 & 0.913 & 0.919 & 0.966 & 0.903 & 0.932 \\
 \midrule
-Mean & 92.80 & 0.865 & 0.879 & 0.899 & 0.905 & 0.940 & 0.977 & 0.749 & 0.771 \\
-Std & 0.14 & 0.002 & 0.002 & 0.002 & 0.002 & 0.001 & 0.001 & 0.002 & 0.002 \\
+Mean & 92.92 & 0.867 & 0.878 & 0.905 & 0.910 & 0.956 & 0.981 & 0.842 & 0.841 \\
+Std & 0.15 & 0.000 & 0.000 & 0.004 & 0.002 & 0.026 & 0.010 & 0.046 & 0.066 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[h]
 \centering
-\caption{VGG-16-BN: per-seed rank collapse at \texttt{pool4} on uniform noise.}
+\caption{VGG-16-BN per-seed layer-wise rank collapse on all OOD datasets (seed 42 / 43 / 44).}
 \label{tab:vgg_rc_perseed}
-\begin{tabular}{@{}lc@{}}
+\small
+\begin{tabular}{@{}lccccc@{}}
 \toprule
-Seed & \texttt{pool4} RC \\
+OOD Dataset & \texttt{pool0} & \texttt{pool1} & \texttt{pool2} & \texttt{pool3} & \texttt{pool4} \\
 \midrule
-1 & 0.839 \\
-2 & 0.832 \\
-3 & 0.837 \\
+\multicolumn{6}{c}{\emph{Seed 42}} \\
+CIFAR-100 & 0.008 & 0.002 & $-$0.029 & $-$0.380 & $-$0.658 \\
+SVHN & 0.266 & 0.226 & 0.160 & $-$0.006 & 0.113 \\
+Gaussian & $-$0.064 & 0.043 & 0.160 & 0.177 & 0.662 \\
+Uniform & $-$0.067 & 0.016 & 0.202 & 0.290 & 0.781 \\
 \midrule
-Mean & 0.836 \\
-Std & 0.004 \\
+\multicolumn{6}{c}{\emph{Seed 43}} \\
+CIFAR-100 & 0.008 & 0.002 & $-$0.033 & $-$0.373 & $-$0.626 \\
+SVHN & 0.267 & 0.210 & 0.163 & 0.023 & $-$0.001 \\
+Gaussian & $-$0.057 & 0.183 & 0.435 & 0.370 & 0.866 \\
+Uniform & $-$0.057 & 0.050 & 0.213 & 0.432 & 0.829 \\
+\midrule
+\multicolumn{6}{c}{\emph{Seed 44}} \\
+CIFAR-100 & 0.010 & 0.002 & $-$0.030 & $-$0.344 & $-$0.652 \\
+SVHN & 0.259 & 0.212 & 0.170 & 0.032 & $-$0.047 \\
+Gaussian & $-$0.053 & 0.115 & 0.343 & 0.553 & 0.824 \\
+Uniform & $-$0.054 & 0.061 & 0.290 & 0.449 & 0.790 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\subsection{Statistical Test Details}
-
-The paired $t$-test comparing \texttt{layer1} vs.\ \texttt{layer4} rank collapse in ResNet-18 across 3 seeds yields:
-\begin{align}
-    \bar{d} &= 0.625 - 0.007 = 0.618, \\
-    s_d &= 0.005, \\
-    t &= \frac{\bar{d}}{s_d / \sqrt{3}} = 20.37, \\
-    p &= 0.002 \quad (df = 2, \text{ two-tailed}).
-\end{align}
-The extremely large $t$-statistic reflects the consistency and magnitude of the deep-vs-shallow collapse difference across all seeds.
 
 \end{document}
