@@ -1,45 +1,24 @@
-\documentclass[11pt]{article}
-
-% Geometry and layout
-\usepackage[margin=1in]{geometry}
-\usepackage{setspace}
-\onehalfspacing
-
-% Math and symbols
-\usepackage{amsmath,amssymb,amsfonts}
-
-% Tables and figures
+\documentclass{article}
+\usepackage{iclr2025_conference,times}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+
+% Additional packages
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{array}
-
-% Typography and formatting
-\usepackage{microtype}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-
-% Hyperlinks
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
-
-% Algorithm (if needed)
 \usepackage{algorithm}
 \usepackage{algorithmic}
 
-% Section formatting
-\usepackage{titlesec}
-\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
-
-\title{\textbf{Layer-Wise Feature Rank Collapse as a Diagnostic\\for Out-of-Distribution Detection}}
+\title{Layer-Wise Feature Rank Collapse as a Diagnostic\\for Out-of-Distribution Detection}
 
 \author{
   Ali Saffarini \\
   Harvard University \\
   \texttt{asaffarini@college.harvard.edu}
 }
-
-\date{}
 
 \begin{document}
 
@@ -49,7 +28,7 @@
 % ABSTRACT
 % ============================================================================
 \begin{abstract}
-Reliable detection of out-of-distribution (OOD) inputs is critical for the safe deployment of deep neural networks. We introduce \emph{layer-wise feature rank collapse} as a diagnostic signal for OOD detection and study how the effective rank of intermediate feature representations degrades across network depth when models encounter OOD data. Training ResNet-18 and VGG-16-BN on CIFAR-10 (3 seeds each, NVIDIA A100 GPU) and evaluating against four OOD benchmarks (CIFAR-100, SVHN, Gaussian noise, uniform noise), we find that deep layers exhibit dramatically stronger rank collapse on OOD inputs than shallow layers. For example, on uniform noise, ResNet-18's shallowest residual block shows a rank collapse of $-0.053 \pm 0.011$ (i.e., no collapse), while the deepest block collapses to $0.625 \pm 0.088$; VGG-16-BN's deepest pooling stage collapses even further to $0.800 \pm 0.021$. We argue that this layer-wise collapse profile is complementary to established OOD scores (MSP, Energy) and provides interpretable, architecture-aware diagnostics that existing scalar-summary methods lack.
+Reliable detection of out-of-distribution (OOD) inputs is critical for the safe deployment of deep neural networks. We introduce \emph{layer-wise feature rank collapse} as a diagnostic signal for OOD detection and study how the effective rank of intermediate feature representations degrades across network depth when models encounter OOD data. Training ResNet-18 and VGG-16-BN on CIFAR-10 (3 seeds each, NVIDIA A100 GPU) and evaluating against four OOD benchmarks (CIFAR-100, SVHN, Gaussian noise, uniform noise), we find that deep layers exhibit dramatically stronger rank collapse on OOD inputs than shallow layers. For example, on uniform noise, ResNet-18's shallowest residual block shows a rank collapse of $-0.053 \pm 0.011$ (i.e., no collapse), while the deepest block collapses to $0.625 \pm 0.088$; VGG-16-BN's deepest pooling stage collapses even further to $0.800 \pm 0.021$. We argue that this layer-wise collapse profile is complementary to established OOD scores (MSP, Energy) and provides interpretable, architecture-aware diagnostics that existing scalar-summary methods lack.\footnote{Code and data: \url{https://github.com/alisaffarini/feature-rank-collapse}}
 \end{abstract}
 
 % ============================================================================
@@ -58,9 +37,9 @@ Reliable detection of out-of-distribution (OOD) inputs is critical for the safe 
 \section{Introduction}
 \label{sec:intro}
 
-Deep neural networks achieve remarkable performance on their training distributions but can produce confidently wrong predictions when confronted with inputs that fall outside the distribution they were trained on~\cite{nguyen2015deep}. This brittleness poses serious risks in safety-critical applications such as autonomous driving, medical diagnosis, and financial decision-making, where the cost of a silent, confident misclassification can be catastrophic. Out-of-distribution (OOD) detection---the task of identifying inputs that do not belong to the training distribution---has therefore emerged as a central problem in trustworthy machine learning~\cite{hendrycks2017baseline,amodei2016concrete}.
+Deep neural networks achieve remarkable performance on their training distributions but can produce confidently wrong predictions when confronted with inputs that fall outside the distribution they were trained on~\citep{nguyen2015deep}. This brittleness poses serious risks in safety-critical applications such as autonomous driving, medical diagnosis, and financial decision-making, where the cost of a silent, confident misclassification can be catastrophic. Out-of-distribution (OOD) detection---the task of identifying inputs that do not belong to the training distribution---has therefore emerged as a central problem in trustworthy machine learning~\citep{hendrycks2017baseline,amodei2016concrete}.
 
-A rich literature has developed around OOD detection, with approaches ranging from softmax-based confidence scoring~\cite{hendrycks2017baseline} and energy functions~\cite{liu2020energy} to feature-space methods using Mahalanobis distance~\cite{lee2018simple} and gradient-based signals~\cite{huang2021importance}. While these methods are effective in aggregate, they typically produce a single scalar score per input. This leaves practitioners with limited insight into \emph{where} in the network the OOD nature of an input manifests and \emph{how} the model's internal representations degrade when faced with unfamiliar data.
+A rich literature has developed around OOD detection, with approaches ranging from softmax-based confidence scoring~\citep{hendrycks2017baseline} and energy functions~\citep{liu2020energy} to feature-space methods using Mahalanobis distance~\citep{lee2018simple} and gradient-based signals~\citep{huang2021importance}. While these methods are effective in aggregate, they typically produce a single scalar score per input. This leaves practitioners with limited insight into \emph{where} in the network the OOD nature of an input manifests and \emph{how} the model's internal representations degrade when faced with unfamiliar data.
 
 In this work, we take a complementary perspective. Rather than engineering a new scalar OOD score, we study the \emph{structural} changes in feature representations across network depth. Specifically, we measure the \emph{effective rank} of feature maps at each layer and quantify how this rank collapses when the model processes OOD versus in-distribution data. Our key insight is simple but powerful: deep layers, which encode increasingly abstract and task-specific features, are far more sensitive to distributional shift than shallow layers, which capture generic low-level statistics. This differential collapse creates a distinctive \emph{layer-wise signature} that characterizes OOD inputs.
 
@@ -78,16 +57,16 @@ In this work, we take a complementary perspective. Rather than engineering a new
 \label{sec:related}
 
 \paragraph{OOD detection via output-space methods.}
-The seminal baseline of Hendrycks and Gimpel~\cite{hendrycks2017baseline} uses the maximum softmax probability (MSP) as a confidence score, flagging inputs with low MSP as OOD. ODIN~\cite{liang2018enhancing} improves upon this with temperature scaling and input perturbations. Liu et al.~\cite{liu2020energy} propose an energy-based score derived from the logits, which provides a theoretically grounded alternative to MSP with improved performance on several benchmarks. These methods are lightweight and require no architectural changes, but they reduce the OOD signal to a single scalar derived from the final layer.
+The seminal baseline of \citet{hendrycks2017baseline} uses the maximum softmax probability (MSP) as a confidence score, flagging inputs with low MSP as OOD. ODIN~\citep{liang2018enhancing} improves upon this with temperature scaling and input perturbations. \citet{liu2020energy} propose an energy-based score derived from the logits, which provides a theoretically grounded alternative to MSP with improved performance on several benchmarks. These methods are lightweight and require no architectural changes, but they reduce the OOD signal to a single scalar derived from the final layer.
 
 \paragraph{Feature-space methods.}
-Lee et al.~\cite{lee2018simple} fit class-conditional Gaussian distributions to intermediate features and use the Mahalanobis distance as an OOD score, demonstrating that intermediate layers carry useful OOD information. Sun et al.~\cite{sun2022dice} propose sparsification of the penultimate-layer features to sharpen the OOD signal. While these methods leverage intermediate representations, they typically focus on a single ``best'' layer rather than analyzing the progression across depth.
+\citet{lee2018simple} fit class-conditional Gaussian distributions to intermediate features and use the Mahalanobis distance as an OOD score, demonstrating that intermediate layers carry useful OOD information. \citet{sun2022dice} propose sparsification of the penultimate-layer features to sharpen the OOD signal. While these methods leverage intermediate representations, they typically focus on a single ``best'' layer rather than analyzing the progression across depth.
 
 \paragraph{Rank and feature analysis in deep learning.}
-The notion of rank collapse---or dimensional collapse---has been studied primarily in the context of self-supervised learning, where representation collapse is a failure mode to be avoided~\cite{jing2022understanding,hua2021feature}. Papyan et al.~\cite{papyan2020prevalence} document ``neural collapse'' in the terminal phase of training, where last-layer features converge to a simplex structure. Our work differs in that we study rank collapse as a \emph{diagnostic signal} for OOD detection rather than a training pathology, and we explicitly analyze its progression across network depth.
+The notion of rank collapse---or dimensional collapse---has been studied primarily in the context of self-supervised learning, where representation collapse is a failure mode to be avoided~\citep{jing2022understanding,hua2021feature}. \citet{papyan2020prevalence} document ``neural collapse'' in the terminal phase of training, where last-layer features converge to a simplex structure. Our work differs in that we study rank collapse as a \emph{diagnostic signal} for OOD detection rather than a training pathology, and we explicitly analyze its progression across network depth.
 
 \paragraph{Layer-wise analysis for robustness.}
-Several works have examined how representations change across layers under distributional shift~\cite{raghu2017svcca,kornblith2019similarity}. CKA-based analyses~\cite{nguyen2021wide} reveal that deep layers are more sensitive to distribution shift than shallow ones. Our rank collapse metric provides a complementary, computationally lightweight perspective on this phenomenon, with direct applicability to OOD detection.
+Several works have examined how representations change across layers under distributional shift~\citep{raghu2017svcca,kornblith2019similarity}. CKA-based analyses~\citep{nguyen2021wide} reveal that deep layers are more sensitive to distribution shift than shallow ones. Our rank collapse metric provides a complementary, computationally lightweight perspective on this phenomenon, with direct applicability to OOD detection.
 
 % ============================================================================
 % 3. METHOD
@@ -100,7 +79,7 @@ Several works have examined how representations change across layers under distr
 
 Let $f_\ell(\mathbf{x}) \in \mathbb{R}^{C_\ell \times H_\ell \times W_\ell}$ denote the activation tensor at layer $\ell$ of a trained network for input $\mathbf{x}$. Given a batch of $N$ inputs, we reshape each activation tensor into a matrix $\mathbf{A}_\ell \in \mathbb{R}^{N \times d_\ell}$, where $d_\ell = C_\ell \cdot H_\ell \cdot W_\ell$ is the flattened feature dimension.
 
-We measure the \emph{effective rank} of $\mathbf{A}_\ell$ using the entropy-based definition of \cite{roy2007effective}. Let $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k > 0$ denote the positive singular values of $\mathbf{A}_\ell$. The normalized singular value distribution is $p_i = \sigma_i / \sum_j \sigma_j$, and the effective rank is:
+We measure the \emph{effective rank} of $\mathbf{A}_\ell$ using the entropy-based definition of \citet{roy2007effective}. Let $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k > 0$ denote the positive singular values of $\mathbf{A}_\ell$. The normalized singular value distribution is $p_i = \sigma_i / \sum_j \sigma_j$, and the effective rank is:
 \begin{equation}
     \text{erank}(\mathbf{A}_\ell) = \exp\!\left( -\sum_{i=1}^{k} p_i \log p_i \right),
     \label{eq:erank}
@@ -137,21 +116,21 @@ For architectures with residual connections (ResNet), we monitor the output of e
 \subsection{Setup}
 \label{sec:setup}
 
-\paragraph{In-distribution data.} We use CIFAR-10~\cite{krizhevsky2009learning} as the in-distribution dataset (50,000 training images, 10,000 test images, 10 classes).
+\paragraph{In-distribution data.} We use CIFAR-10~\citep{krizhevsky2009learning} as the in-distribution dataset (50,000 training images, 10,000 test images, 10 classes).
 
 \paragraph{OOD benchmarks.} We evaluate on four OOD datasets spanning a range of semantic and statistical distances from CIFAR-10:
 \begin{itemize}
-    \item \textbf{CIFAR-100}~\cite{krizhevsky2009learning}: semantically similar (natural images, different fine-grained classes).
-    \item \textbf{SVHN}~\cite{netzer2011reading}: semantically distinct (street-view house numbers).
+    \item \textbf{CIFAR-100}~\citep{krizhevsky2009learning}: semantically similar (natural images, different fine-grained classes).
+    \item \textbf{SVHN}~\citep{netzer2011reading}: semantically distinct (street-view house numbers).
     \item \textbf{Gaussian noise}: each pixel sampled i.i.d.\ from $\mathcal{N}(0.5, 0.25)$, clipped to $[0,1]$.
     \item \textbf{Uniform noise}: each pixel sampled i.i.d.\ from $\text{Uniform}(0, 1)$.
 \end{itemize}
 
-\paragraph{Architectures.} We compare ResNet-18~\cite{he2016deep} and VGG-16-BN~\cite{simonyan2015very}, both adapted for $32 \times 32$ inputs.
+\paragraph{Architectures.} We compare ResNet-18~\citep{he2016deep} and VGG-16-BN~\citep{simonyan2015very}, both adapted for $32 \times 32$ inputs.
 
 \paragraph{Training.} All models are trained for 50 epochs using SGD with momentum 0.9, weight decay $5 \times 10^{-4}$, and an initial learning rate of 0.1 (ResNet-18) or 0.05 (VGG-16-BN) with cosine annealing. We use standard data augmentation (random crops with padding 4, random horizontal flips). We train with 3 random seeds (42, 43, 44) on a single NVIDIA A100 GPU. Total wall-clock time for all 6 training runs (2 architectures $\times$ 3 seeds) was approximately 111 minutes.
 
-\paragraph{OOD scoring.} We report AUROC for two established baselines: Maximum Softmax Probability (MSP)~\cite{hendrycks2017baseline} and Energy score~\cite{liu2020energy} with temperature $T = 1$.
+\paragraph{OOD scoring.} We report AUROC for two established baselines: Maximum Softmax Probability (MSP)~\citep{hendrycks2017baseline} and Energy score~\citep{liu2020energy} with temperature $T = 1$.
 
 \subsection{Main Results}
 \label{sec:main_results}
@@ -225,7 +204,7 @@ For near-OOD data (CIFAR-100), both architectures show minimal rank collapse at 
 
 With both architectures now evaluated, we can directly compare how network topology affects rank collapse. On uniform noise, VGG-16-BN's deepest pooling stage (\texttt{pool4}) exhibits rank collapse of $0.800 \pm 0.021$, substantially exceeding ResNet-18's deepest residual block (\texttt{layer4}) at $0.625 \pm 0.088$. The same pattern holds for Gaussian noise: VGG-16-BN \texttt{pool4} collapses by $0.784 \pm 0.088$ versus ResNet-18 \texttt{layer4} at $0.595 \pm 0.050$.
 
-This supports the hypothesis that residual connections partially mitigate rank collapse by preserving information from earlier layers via skip connections~\cite{veit2016residual}. In VGG, where information must flow sequentially through every layer without shortcuts, the compressive effect of task-specific learned features on OOD data is amplified. Notably, VGG-16-BN has 5 monitored pooling stages versus ResNet-18's 4 residual blocks, providing an additional depth point. The VGG-16-BN collapse profile on uniform noise is $-0.059, 0.042, 0.235, 0.390, 0.800$, showing a smooth, monotonic increase that spans nearly the full $[0, 1]$ range.
+This supports the hypothesis that residual connections partially mitigate rank collapse by preserving information from earlier layers via skip connections~\citep{veit2016residual}. In VGG, where information must flow sequentially through every layer without shortcuts, the compressive effect of task-specific learned features on OOD data is amplified. Notably, VGG-16-BN has 5 monitored pooling stages versus ResNet-18's 4 residual blocks, providing an additional depth point. The VGG-16-BN collapse profile on uniform noise is $-0.059, 0.042, 0.235, 0.390, 0.800$, showing a smooth, monotonic increase that spans nearly the full $[0, 1]$ range.
 
 Interestingly, on CIFAR-100 (near-OOD), VGG-16-BN shows strongly \emph{negative} deep-layer collapse ($-0.645 \pm 0.014$ at \texttt{pool4}), far more extreme than ResNet-18's $-0.063 \pm 0.006$ at \texttt{layer4}. This suggests that VGG's deep layers are not only more sensitive to far-OOD collapse but also more sensitive to near-OOD rank \emph{expansion}---again consistent with the absence of skip connections allowing more extreme representational shifts at depth.
 
@@ -247,11 +226,11 @@ An important question is whether rank collapse merely recapitulates information 
 
 \subsection{Why Do Deep Layers Collapse More?}
 
-The monotonic increase of rank collapse with depth admits a natural explanation grounded in the feature hierarchy of deep networks. Shallow layers learn low-level, generic features---edges, textures, color gradients---that are activated similarly by natural images and structured noise alike~\cite{yosinski2014transferable}. These features span a high-dimensional subspace regardless of input distribution, yielding near-zero rank collapse.
+The monotonic increase of rank collapse with depth admits a natural explanation grounded in the feature hierarchy of deep networks. Shallow layers learn low-level, generic features---edges, textures, color gradients---that are activated similarly by natural images and structured noise alike~\citep{yosinski2014transferable}. These features span a high-dimensional subspace regardless of input distribution, yielding near-zero rank collapse.
 
 Deep layers, by contrast, learn increasingly abstract, class-specific features---object parts, semantic compositions---that are highly specialized to the training distribution. When presented with OOD data, these task-specific neurons either fail to activate or activate in degenerate patterns, causing the effective rank of the activation matrix to plummet. The network, in effect, ``has nothing to say'' about OOD inputs at its deepest layers, and this silence manifests as dimensional collapse.
 
-This interpretation aligns with the information bottleneck view of deep learning~\cite{shwartz2017opening}: as information is progressively compressed through layers, the representation becomes maximally informative about training-distribution labels but discards information orthogonal to the task. OOD inputs, which carry little task-relevant information, are compressed to an even greater degree.
+This interpretation aligns with the information bottleneck view of deep learning~\citep{shwartz2017opening}: as information is progressively compressed through layers, the representation becomes maximally informative about training-distribution labels but discards information orthogonal to the task. OOD inputs, which carry little task-relevant information, are compressed to an even greater degree.
 
 \subsection{Practical Implications}
 
@@ -291,102 +270,102 @@ Our work opens several avenues for future research: extending the analysis to la
 % ============================================================================
 \begin{thebibliography}{25}
 
-\bibitem{amodei2016concrete}
+\bibitem[Amodei et~al.(2016)]{amodei2016concrete}
 D.~Amodei, C.~Olah, J.~Steinhardt, P.~Christiano, J.~Schulman, and D.~Man\'{e}.
 \newblock Concrete problems in AI safety.
 \newblock \emph{arXiv preprint arXiv:1606.06565}, 2016.
 
-\bibitem{he2016deep}
+\bibitem[He et~al.(2016)]{he2016deep}
 K.~He, X.~Zhang, S.~Ren, and J.~Sun.
 \newblock Deep residual learning for image recognition.
 \newblock In \emph{CVPR}, pages 770--778, 2016.
 
-\bibitem{hendrycks2017baseline}
+\bibitem[Hendrycks \& Gimpel(2017)]{hendrycks2017baseline}
 D.~Hendrycks and K.~Gimpel.
 \newblock A baseline for detecting misclassified and out-of-distribution examples in neural networks.
 \newblock In \emph{ICLR}, 2017.
 
-\bibitem{hua2021feature}
+\bibitem[Hua et~al.(2021)]{hua2021feature}
 T.~Hua, W.~Wang, Z.~Xue, S.~Ren, Y.~Wang, and H.~Zhao.
 \newblock On feature decorrelation in self-supervised learning.
 \newblock In \emph{ICCV}, pages 9598--9608, 2021.
 
-\bibitem{huang2021importance}
+\bibitem[Huang et~al.(2021)]{huang2021importance}
 R.~Huang, A.~Geng, and Y.~Li.
 \newblock On the importance of gradients for detecting distributional shifts in the wild.
 \newblock In \emph{NeurIPS}, 2021.
 
-\bibitem{jing2022understanding}
+\bibitem[Jing et~al.(2022)]{jing2022understanding}
 L.~Jing, P.~Vincent, Y.~LeCun, and Y.~Tian.
 \newblock Understanding dimensional collapse in contrastive self-supervised learning.
 \newblock In \emph{ICLR}, 2022.
 
-\bibitem{kornblith2019similarity}
+\bibitem[Kornblith et~al.(2019)]{kornblith2019similarity}
 S.~Kornblith, M.~Norouzi, H.~Lee, and G.~Hinton.
 \newblock Similarity of neural network representations revisited.
 \newblock In \emph{ICML}, pages 3519--3529, 2019.
 
-\bibitem{krizhevsky2009learning}
+\bibitem[Krizhevsky(2009)]{krizhevsky2009learning}
 A.~Krizhevsky.
 \newblock Learning multiple layers of features from tiny images.
 \newblock Technical report, University of Toronto, 2009.
 
-\bibitem{lee2018simple}
+\bibitem[Lee et~al.(2018)]{lee2018simple}
 K.~Lee, K.~Lee, H.~Lee, and J.~Shin.
 \newblock A simple unified framework for detecting out-of-distribution samples and adversarial attacks.
 \newblock In \emph{NeurIPS}, pages 7167--7177, 2018.
 
-\bibitem{liang2018enhancing}
+\bibitem[Liang et~al.(2018)]{liang2018enhancing}
 S.~Liang, Y.~Li, and R.~Srikant.
 \newblock Enhancing the reliability of out-of-distribution image detection in neural networks.
 \newblock In \emph{ICLR}, 2018.
 
-\bibitem{liu2020energy}
+\bibitem[Liu et~al.(2020)]{liu2020energy}
 W.~Liu, X.~Wang, J.~Owens, and Y.~Li.
 \newblock Energy-based out-of-distribution detection.
 \newblock In \emph{NeurIPS}, pages 21464--21475, 2020.
 
-\bibitem{netzer2011reading}
+\bibitem[Netzer et~al.(2011)]{netzer2011reading}
 Y.~Netzer, T.~Wang, A.~Coates, A.~Bissacco, B.~Wu, and A.~Y.~Ng.
 \newblock Reading digits in natural images with unsupervised feature learning.
 \newblock In \emph{NeurIPS Workshop on Deep Learning and Unsupervised Feature Learning}, 2011.
 
-\bibitem{nguyen2015deep}
+\bibitem[Nguyen et~al.(2015)]{nguyen2015deep}
 A.~Nguyen, J.~Yosinski, and J.~Clune.
 \newblock Deep neural networks are easily fooled: High confidence predictions for unrecognizable images.
 \newblock In \emph{CVPR}, pages 427--436, 2015.
 
-\bibitem{nguyen2021wide}
+\bibitem[Nguyen et~al.(2021)]{nguyen2021wide}
 T.~Nguyen, M.~Raghu, and S.~Kornblith.
 \newblock Do wide and deep networks learn the same things? Uncovering how neural network representations vary with width and depth.
 \newblock In \emph{ICLR}, 2021.
 
-\bibitem{papyan2020prevalence}
+\bibitem[Papyan et~al.(2020)]{papyan2020prevalence}
 V.~Papyan, X.~Y.~Han, and D.~L.~Donoho.
 \newblock Prevalence of neural collapse during the terminal phase of deep learning training.
 \newblock \emph{Proceedings of the National Academy of Sciences}, 117(40):24652--24663, 2020.
 
-\bibitem{raghu2017svcca}
+\bibitem[Raghu et~al.(2017)]{raghu2017svcca}
 M.~Raghu, J.~Gilmer, J.~Yosinski, and J.~Sohl-Dickstein.
 \newblock {SVCCA}: Singular vector canonical correlation analysis for deep learning dynamics and interpretability.
 \newblock In \emph{NeurIPS}, pages 6076--6085, 2017.
 
-\bibitem{roy2007effective}
+\bibitem[Roy \& Vetterli(2007)]{roy2007effective}
 O.~Roy and M.~Vetterli.
 \newblock The effective rank: A measure of effective dimensionality.
 \newblock In \emph{European Signal Processing Conference (EUSIPCO)}, pages 606--610, 2007.
 
-\bibitem{shwartz2017opening}
+\bibitem[Shwartz-Ziv \& Tishby(2017)]{shwartz2017opening}
 R.~Shwartz-Ziv and N.~Tishby.
 \newblock Opening the black box of deep neural networks via information.
 \newblock \emph{arXiv preprint arXiv:1703.00810}, 2017.
 
-\bibitem{simonyan2015very}
+\bibitem[Simonyan \& Zisserman(2015)]{simonyan2015very}
 K.~Simonyan and A.~Zisserman.
 \newblock Very deep convolutional networks for large-scale image recognition.
 \newblock In \emph{ICLR}, 2015.
 
-\bibitem{sun2022dice}
+\bibitem[Sun \& Li(2022)]{sun2022dice}
 Y.~Sun and Y.~Li.
 \newblock {DICE}: Leveraging sparsification for out-of-distribution detection.
 \newblock In \emph{ECCV}, pages 691--708, 2022.
