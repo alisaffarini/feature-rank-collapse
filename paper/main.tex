@@ -100,7 +100,7 @@ Several works have examined how representations change across layers under distr
 
 Let $f_\ell(\mathbf{x}) \in \mathbb{R}^{C_\ell \times H_\ell \times W_\ell}$ denote the activation tensor at layer $\ell$ of a trained network for input $\mathbf{x}$. Given a batch of $N$ inputs, we reshape each activation tensor into a matrix $\mathbf{A}_\ell \in \mathbb{R}^{N \times d_\ell}$, where $d_\ell = C_\ell \cdot H_\ell \cdot W_\ell$ is the flattened feature dimension.
 
-We measure the \emph{effective rank} of $\mathbf{A}_\ell$ using the entropy-based definition of \citet{roy2007effective}. Let $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k > 0$ denote the positive singular values of $\mathbf{A}_\ell$. The normalized singular value distribution is $p_i = \sigma_i / \sum_j \sigma_j$, and the effective rank is:
+We measure the \emph{effective rank} of $\mathbf{A}_\ell$ using the entropy-based definition of \cite{roy2007effective}. Let $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_k > 0$ denote the positive singular values of $\mathbf{A}_\ell$. The normalized singular value distribution is $p_i = \sigma_i / \sum_j \sigma_j$, and the effective rank is:
 \begin{equation}
     \text{erank}(\mathbf{A}_\ell) = \exp\!\left( -\sum_{i=1}^{k} p_i \log p_i \right),
     \label{eq:erank}
